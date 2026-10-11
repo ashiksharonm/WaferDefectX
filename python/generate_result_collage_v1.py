@@ -113,13 +113,13 @@ def create_linkedin_image3():
     fig, axes = plt.subplots(1, 2, figsize=(14, 6))
     
     # Latency comparison
-    implementations = ['Python\n(OpenCV)', 'C++\n(OpenCV)']
-    latencies = [8.6, 2.1]  # Python measured, C++ estimated based on typical speedup
+    implementations = ['Python\n(OpenCV)\nunverified', 'C++\n(OpenCV)\nESTIMATE, not measured']
+    latencies = [8.6, 2.1]  # ESTIMATES: neither value is backed by a committed benchmark run
     colors = ['#3498db', '#e74c3c']
     
     bars1 = axes[0].bar(implementations, latencies, color=colors, width=0.6, edgecolor='black', linewidth=1.5)
     axes[0].set_ylabel('Latency (ms)', fontsize=12, fontweight='bold')
-    axes[0].set_title('Per-Image Inference Latency', fontsize=14, fontweight='bold')
+    axes[0].set_title('Per-Image Latency (illustrative estimates, not measured)', fontsize=14, fontweight='bold')
     axes[0].set_ylim(0, 12)
     
     # Add value labels
@@ -127,16 +127,14 @@ def create_linkedin_image3():
         axes[0].text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.3, 
                     f'{val} ms', ha='center', fontsize=12, fontweight='bold')
     
-    # Add speedup annotation
-    axes[0].annotate('4.1x Speedup', xy=(1, 2.1), xytext=(0.5, 6),
-                    fontsize=14, fontweight='bold', color='#27ae60',
-                    arrowprops=dict(arrowstyle='->', color='#27ae60', lw=2))
+    # Speedup annotation intentionally omitted
+    # (speedup annotation removed: the C++ figure is an estimate, not a measurement)
     
-    # Throughput comparison
-    fps = [116, 476]  # 1000/latency
+    # Throughput derived from the estimated latencies above
+    fps = [116, 476]  # 1000/latency (estimates)
     bars2 = axes[1].bar(implementations, fps, color=colors, width=0.6, edgecolor='black', linewidth=1.5)
     axes[1].set_ylabel('Throughput (FPS)', fontsize=12, fontweight='bold')
-    axes[1].set_title('Real-time Inspection Throughput', fontsize=14, fontweight='bold')
+    axes[1].set_title('Implied Throughput (from estimates)', fontsize=14, fontweight='bold')
     axes[1].set_ylim(0, 550)
     
     for bar, val in zip(bars2, fps):
@@ -147,7 +145,7 @@ def create_linkedin_image3():
     axes[1].axhline(y=60, color='green', linestyle='--', linewidth=2, label='Real-time Target (60 FPS)')
     axes[1].legend(loc='upper right')
     
-    plt.suptitle("WaferDefectX: Python vs C++ Performance Benchmarking", fontsize=16, fontweight='bold')
+    plt.suptitle("WaferDefectX: Python vs C++ latency (ESTIMATES, not a benchmark)", fontsize=16, fontweight='bold')
     plt.tight_layout()
     plt.savefig("WaferDefectX/results/linkedin_image3_benchmark.png", dpi=150, bbox_inches='tight',
                 facecolor='white', edgecolor='none')
