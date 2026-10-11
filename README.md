@@ -26,7 +26,7 @@ graph TD
 ## 🖼️ Results Gallery
 
 ### 1. Real-time Defect Detection
-*Automated localization of surface defects with multi-class classification (Scratch, Particle, Void)*
+*Automated localization of surface defects with multi-class classification (Scratch, Particle; trained on a small synthetic set)*
 
 ![Defect Detection Output](results/wafer_defect_detection_before_after.png)
 
@@ -39,28 +39,21 @@ graph TD
 
 ---
 
-### 3. Python vs C++ Performance Benchmark
-*Latency comparison showing 4x speedup with C++ implementation (8.6ms → 2.1ms)*
-
-![Performance Benchmark](results/python_cpp_performance_benchmark.png)
-
----
-
-### 4. Frequency-Domain Noise Suppression
+### 3. Frequency-Domain Noise Suppression
 *FFT-based filtering for wafer noise removal: Original vs Low-Pass vs Band-Pass filtered*
 
 ![FFT Filter Comparison](results/fft_filter_comparison.png)
 
 ---
 
-### 5. Filter Frequency Responses
+### 4. Filter Frequency Responses
 *Visualization of Low-Pass, High-Pass, and Band-Pass filter masks in frequency domain*
 
 ![Filter Responses](results/filter_responses.png)
 
 ---
 
-### 6. Spectrum Analysis
+### 5. Spectrum Analysis
 *Spatial vs Frequency domain representation of wafer images*
 
 ![Spectrum Analysis](results/spectrum_analysis.png)
@@ -183,7 +176,7 @@ The transition from R&D (Python) to Production (C++) typically involves the foll
     - `real`, `user`, `sys` time latency
     - Peak RSS (Memory)
     - CPU Utilization
-- **Optimization Path**: Python prototype (~25ms) → C++ Implementation (~5ms) using standard OpenCV optimizations.
+- **Optimization Path**: a C++ port of preprocessing/localization exists; its speed relative to Python has not been measured.
 
 ### 3. Deployment Constraints
 - **Dependencies**: Minimized external deps (only OpenCV 4.x required).
@@ -191,8 +184,9 @@ The transition from R&D (Python) to Production (C++) typically involves the foll
 
 ## 📊 Performance
 (See `WaferDefectX/benchmarks/` for latest reports)
-- **Python Latency**: ~20-30ms per image (resolution dependent).
-- **C++ Latency**: Expected <10ms (environment dependent).
+- No committed benchmark results. Earlier figures (Python vs C++ "4x", 2.1ms) were estimates, not measurements, and have been removed. Run `benchmarks/benchmark_linux.sh` to measure on your own hardware.
+- **Model compression**: the CNN uses PyTorch dynamic INT8 quantization on its Linear layers only (`results/cnn_wafer_model.pth` 629 KB -> `results/cnn_wafer_model_quantized.pth` 237 KB). Accuracy impact of quantization has not been evaluated.
+- **Data**: the dataset is 79 synthetic wafer images in three classes (good, particle, scratch); there is no "void" class, and the real WM-811K dataset is not used.
 
 ## 📝 Future Work
 - Integrate Deep Learning (CNN) for complex defect classification.
