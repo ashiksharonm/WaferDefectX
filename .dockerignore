@@ -1,0 +1,13 @@
+.git
+.github
+data
+results
+cpp
+python
+frequency_analysis
+tests
+docs
+models
+reports
+**/__pycache__
+.env
