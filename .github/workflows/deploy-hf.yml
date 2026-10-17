@@ -15,7 +15,7 @@ jobs:
       - name: Skip when HF_TOKEN / HF_SPACE are not configured
         if: env.HF_TOKEN == '' || env.HF_SPACE == ''
         run: echo "HF_TOKEN secret or HF_SPACE variable not set; skipping deploy."
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         if: env.HF_TOKEN != '' && env.HF_SPACE != ''
       - name: Push to the Space
         if: env.HF_TOKEN != '' && env.HF_SPACE != ''
