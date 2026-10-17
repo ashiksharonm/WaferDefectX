@@ -46,7 +46,15 @@ Calibration changed ECE negligibly here because the forest was already well cali
 
 ## Performance measurements
 
-The old "C++ 2.1 ms / 4x faster" figure was an unmeasured estimate and has been removed. `benchmarks/bench.py` now measures the Python/OpenCV and C++ pipelines (preprocessing plus localisation, excluding image decode) on the committed 800x800 images and prints the hardware next to the numbers. The `benchmark` CI job builds the C++ core and runs it on the GitHub Actions runner CPU; results appear in that job's summary and as the `bench` artifact. No speed claim is made here beyond what that job prints.
+The old "C++ 2.1 ms / 4x faster" figure was an unmeasured estimate and has been removed. `benchmarks/bench.py` now measures the Python/OpenCV and C++ pipelines (preprocessing plus localisation, excluding image decode) on the committed 800x800 images and prints the hardware next to the numbers. The `benchmark` CI job builds the C++ core and runs it on the GitHub Actions runner CPU; results appear in that job's summary and as the `bench` artifact. Measured in CI run 39052649982 (GitHub Actions, AMD EPYC 9V45, 4 vCPU, Ubuntu 24.04, OpenCV 4.9; 79 images x 3 repeats):
+
+| Path | median | p95 |
+|---|---|---|
+| Python + OpenCV pipeline | 7.49 ms | 8.72 ms |
+| C++ pipeline | 8.96 ms | 11.10 ms |
+| Service `/predict` (end to end) | 21.9 ms | 27.5 ms |
+
+The C++ port is about 20% slower than the Python path here: the Python pipeline already runs inside OpenCV's optimised native code, so a direct port adds no speed. No other speed claim is made.
 
 ## Limitations
 
@@ -122,7 +130,7 @@ graph TD
 ---
 
 ## 📌 Project Overview
-The system simulates a high-throughput inspection tool found in semiconductor fabs (e.g., Applied Materials). It is designed with modularity and performance in mind, featuring a Python prototype for R&D and a C++ core for production deployment.
+The system simulates a high-throughput inspection tool found in semiconductor fabs (e.g., Applied Materials). It is designed with modularity and performance in mind, with a Python pipeline and a C++ port of the same preprocessing and localisation.
 
 ### Key Features
 - **Synthetic Data Generation**: Simulates realistic wafer maps with customizable defects.
@@ -203,7 +211,7 @@ python3 WaferDefectX/python/train_eval.py
 ```
 
 ### 4. Build C++ Core
-To compile the high-performance C++ implementation:
+To compile the C++ implementation:
 ```bash
 cd WaferDefectX/cpp
 mkdir build && cd build
