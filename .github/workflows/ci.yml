@@ -30,7 +30,7 @@ jobs:
         run: |
           pytest --cov --cov-report=term-missing --cov-report=xml
           { echo '### Coverage'; echo '```'; coverage report; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: coverage-xml
           path: coverage.xml
@@ -38,7 +38,7 @@ jobs:
         run: |
           python -m wafer_inspect.active_learning --target 0.9 --out reports/active_learning.json | tee al.txt
           { echo '### Active learning (synthetic data, CPU)'; echo '```'; cat al.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: active-learning
           path: reports/active_learning.json
@@ -104,7 +104,7 @@ jobs:
             echo '### Latency benchmark (GitHub Actions runner CPU; shared VM, expect noise)'
             echo '```'; cat bench.txt; echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: bench
           path: benchmarks/results/bench.json
