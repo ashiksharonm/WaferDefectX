@@ -188,10 +188,12 @@ def list_samples() -> List[str]:
 
 @app.get("/samples/{name}")
 def get_sample(name: str) -> Response:
-    path = Path(settings.SAMPLES_DIR) / Path(name).name
-    if path.suffix != ".png" or not path.is_file():
+    # Look the name up among the files that exist instead of building a path from user input.
+    folder = Path(settings.SAMPLES_DIR)
+    matches = {p.name: p for p in folder.glob("*.png")} if folder.is_dir() else {}
+    if name not in matches:
         raise HTTPException(status_code=404, detail="No such sample")
-    return Response(path.read_bytes(), media_type="image/png")
+    return Response(matches[name].read_bytes(), media_type="image/png")
 
 
 _PAGE = """<!doctype html><meta charset=utf-8><title>WaferDefectX demo</title>
