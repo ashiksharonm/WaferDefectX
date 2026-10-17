@@ -1,0 +1,32 @@
+name: Deploy to Hugging Face Space
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      HF_SPACE: ${{ vars.HF_SPACE }} # e.g. ashiksharonm/waferdefectx
+    steps:
+      - name: Skip when HF_TOKEN / HF_SPACE are not configured
+        if: env.HF_TOKEN == '' || env.HF_SPACE == ''
+        run: echo "HF_TOKEN secret or HF_SPACE variable not set; skipping deploy."
+      - uses: actions/checkout@v4
+        if: env.HF_TOKEN != '' && env.HF_SPACE != ''
+      - name: Push to the Space
+        if: env.HF_TOKEN != '' && env.HF_SPACE != ''
+        run: |
+          git clone --depth 1 "https://user:${HF_TOKEN}@huggingface.co/spaces/${HF_SPACE}" space
+          mkdir -p stage
+          cp -r Dockerfile requirements.txt wafer_inspect samples stage/
+          cp deploy/hf-space/README.md stage/README.md
+          rsync -a --delete --exclude .git stage/ space/
+          cd space
+          git config user.name "ci" && git config user.email "ci@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Deploy ${GITHUB_SHA::7}"
+          git push
