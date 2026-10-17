@@ -1,3 +1,11 @@
 cpp/build/
 __pycache__/
 *.pyc
+models/
+data/review_queue.sqlite3
+reports/
+.coverage
+coverage.xml
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/

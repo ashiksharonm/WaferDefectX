@@ -1,0 +1,16 @@
+# `docker compose up --build` -> http://localhost:8000
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      PORT: "8000"
+      REVIEW_CONFIDENCE_THRESHOLD: ${REVIEW_CONFIDENCE_THRESHOLD:-0.8}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    volumes:
+      - review-queue:/app/data
+    restart: unless-stopped
+
+volumes:
+  review-queue:
