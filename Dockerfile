@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 # Stage 1: install dependencies and train the model on synthetic wafers (about a minute on CPU).
-FROM python:3.11-slim AS builder
+FROM python:3.14-slim AS builder
 ENV PIP_NO_CACHE_DIR=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/app
 WORKDIR /app
 RUN python -m venv /opt/venv
@@ -11,7 +11,7 @@ COPY wafer_inspect/ wafer_inspect/
 RUN python -m wafer_inspect.train --out models
 
 # Stage 2: slim non-root runtime (uid 1000, as Hugging Face Spaces expects).
-FROM python:3.11-slim
+FROM python:3.14-slim
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONPATH=/app PORT=7860 PATH=/opt/venv/bin:$PATH
 RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 \
  && rm -rf /var/lib/apt/lists/* \
